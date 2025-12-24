@@ -73,6 +73,8 @@ The repository includes a GitHub Actions workflow (`.github/workflows/ci.yml`) t
 1.  **Tests**: On every push/PR to `main`.
 2.  **Production Sync**: Daily at 8:00 AM Sydney Time (or via manual trigger).
 
+> **Note**: The workflow file is currently commented out to prevent accidental execution before secrets are configured. To enable it, uncomment the contents of `.github/workflows/ci.yml`.
+
 **Required GitHub Secrets**:
 To enable the production workflow, add the following as Repository Secrets:
 -   `TENANT_ID`, `CLIENT_ID`, `CLIENT_SECRET`
