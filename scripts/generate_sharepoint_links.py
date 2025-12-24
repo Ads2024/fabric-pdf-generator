@@ -10,14 +10,24 @@ logger = logging.getLogger(__name__)
 
 def generate_single_employee_link(employee: Dict, access_token: str, drive_id: str, base_folder: str, headers: Dict, retry_count: int = 0, max_retries: int = 3):
     try:
-        employee_id = str(int(employee.get('EmployeeID'))) #Place Holder please change to your relevant employee ID field
+        # Try to find ID and Name fields dynamically if standard keys aren't present
+        employee_id = employee.get('EmployeeID') or employee.get('ID') or employee.get('id')
+        if not employee_id and employee:
+            # Fallback: use the first value found if it looks like an ID (digit)
+             for k, v in employee.items():
+                 if str(v).isdigit():
+                     employee_id = v
+                     break
         
-        if len(employee_id) == 4:
-            employee_id = '0' + employee_id #Adding leading zero if employee ID is 4 digits (again please change to your business logic if needed)
+        employee_id = str(employee_id) if employee_id else "UnknownID"
         
-        employee_name = employee.get('EmployeeName') #Place Holder please change to your relevant employee name field
-        employee_email = employee.get('EmployeeEmail') #Place Holder please change to your relevant employee email field
-        name_identifier = employee.get('Name', '')
+        # Remove hardcoded padding logic. If padding is needed, it should be handled in the SQL query or config.
+        
+        employee_name = employee.get('EmployeeName') or employee.get('Name') or employee.get('name') or "UnknownName"
+        employee_email = employee.get('EmployeeEmail') or employee.get('Email') or employee.get('email') or ""
+        
+        # Use name_identifier for file naming
+        name_identifier = employee.get('Name') or employee_name
 
         folder_name = f"report_{name_identifier}"
         pdf_filename = f"report_{name_identifier}.pdf"
@@ -225,7 +235,7 @@ def upload_csv_to_sharepoint(csv_content: str, access_token: str, drive_id: str,
 
 def create_link_generation_log(total_count: int, success_count: int, failed_count: int, process_datetime: str, failed_records: List[Dict]):
 
-    log_content = f""""
+    log_content = f"""
 ------------------------
 Link Generation Log
 ------------------------
@@ -234,7 +244,7 @@ Success Count: {success_count}
 Failed Count: {failed_count}
 Process DateTime: {process_datetime}
 ------------------------
-"""" 
+""" 
 
     if failed_records:
         log_content += "Failed Records:\n"

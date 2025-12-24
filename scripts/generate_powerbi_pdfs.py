@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 def get_powerbi_access_token(tenant_id: str, client_id: str, client_secret: str):
     try:
         logger.info("Authenticating to Power BI using service principal")
-        credential = ClientSecretCredentia(
+        credential = ClientSecretCredential(
             tenant_id = tenant_id,
             client_id = client_id,
             client_secret = client_secret

@@ -163,9 +163,9 @@ def send_email_via_smtp(smtp_server: str, smtp_port: int, sender_email: str, sen
             logger.info("Email sent successfully")
             return True
         
-        except Exception as e:
-            logger.error(f"Failed to send email: {e}")
-            return False 
+    except Exception as e:
+        logger.error(f"Failed to send email: {e}")
+        return False 
 
 
 

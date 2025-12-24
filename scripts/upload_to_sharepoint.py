@@ -155,7 +155,7 @@ def upload_pdf_stream_to_sharepoint(access_token: str, drive_id: str, folder_pat
                 return False
 
         headers = {
-            "Authorization": f"Bearer {access_token}"
+            "Authorization": f"Bearer {access_token}",
             "Content-Type": "application/pdf"
         }
 

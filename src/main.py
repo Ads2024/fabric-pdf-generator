@@ -2,8 +2,6 @@ import argparse
 import logging
 import os
 import sys
-import argparse
-import logging
 import yaml
 import pytz
 from datetime import datetime
@@ -11,19 +9,19 @@ from typing import Dict, List
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "..", 'scripts'))
 
-from query_fabric_lakehouse import get_areas_list, get_specialised_carers_list
+from query_fabric_lakehouse import get_areas_list, get_specialised_carers_list, get_salesforce_data
 from generate_powerbi_pdfs import (
     get_powerbi_access_token,
-    generate_pdfs_batch
+    generate_pdf_batch
 )
-from upload_csv_to_sharepoint import (
+from upload_to_sharepoint import (
     get_sharepoint_access_token,
     get_site_and_drive_id,
     upload_pdfs_batch,
     upload_text_content_to_sharepoint
 )
 
-from generate_shareable_link import(
+from generate_sharepoint_links import(
     generate_employee_links,
     create_csv_content,
     upload_csv_to_sharepoint,
@@ -33,15 +31,28 @@ from generate_shareable_link import(
 from send_notification import send_bcp_notification
 
 
-logging.basicConfig(
-    level = logging.INFO,
-    format = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-    handlers=[
-        logging.StreamHandler(sys.stdout),
-        logging.FileHandler('fabric_pdf_generator.log')
-    ]
-)
-logger = logging.getLogger(__name__)
+def setup_logging(config_path: str = None):
+    log_file = 'fabric_pdf_generator.log'
+    if config_path:
+        try:
+             with open(config_path, 'r') as f:
+                config = yaml.safe_load(f)
+                if 'logging' in config and 'file_path' in config['logging']:
+                     log_file = config['logging']['file_path']
+        except:
+             pass
+
+    logging.basicConfig(
+        level = logging.INFO,
+        format = '%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+        handlers=[
+            logging.StreamHandler(sys.stdout),
+            logging.FileHandler(log_file)
+        ]
+    )
+    return logging.getLogger(__name__)
+
+logger = setup_logging()
 
 def load_config(config_path: str):
     try:
@@ -110,7 +121,7 @@ def main():
     parser.add_argument(
         '--config',
         type = str,
-        default =  ' config/config.yaml'
+        default =  ' config/config.yaml',
         help= 'Path to config file'
     )
     parser.add_argument(
@@ -225,7 +236,7 @@ def main():
 
             batch_size_areas =  args.batch_size if args.batch_size else config['processing']['batch_size_areas']
 
-            areas_pdfs = generate_pdfs_batch(
+            areas_pdfs = generate_pdf_batch(
                 area_list,
                 env_vars['POWERBI_WORKSPACE_ID'],
                 env_vars['POWERBI_REPORT_ID'],
@@ -278,7 +289,7 @@ def main():
 
                 batch_size_employees = args.batch_size if args.batch_size else config['processing']['batch_size_employees']
 
-                employees_pdfs = generate_pdfs_batch(
+                employees_pdfs = generate_pdf_batch(
                     employee_names,
                     env_vars['POWERBI_WORKSPACE_ID'],
                     env_vars['POWERBI_REPORT_ID'],
@@ -330,7 +341,7 @@ def main():
                 logger.info("STEP 6 : Generating shareable links for employee PDFs")
                 logger.info("="*60) 
 
-                success_records, failed_records = generate_shareable_links(
+                success_records, failed_records = generate_employee_links(
                     employee_list,
                     sharepoint_access_token,
                     drive_id,
@@ -410,9 +421,9 @@ def main():
             logger.info(f"Employees: {employees_success_count} successful, {employees_failed_count} failed")
 
             return 0
-        except Exception as e:
-            logger.error(f"Workflow failed with error: {str(e)}", exc_info=True)
-            return 1
+    except Exception as e:
+        logger.error(f"Workflow failed with error: {str(e)}", exc_info=True)
+        return 1
 
 if __name__ == "__main__":
     sys.exit(main())

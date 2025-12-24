@@ -79,8 +79,13 @@ def get_areas_list(tenant_id: str, client_id: str, client_secret: str, sql_endpo
     try:
         conn = get_fabric_connection(tenant_id, client_id, client_secret, sql_endpoint, database)
         results = execute_query(conn, query)
-        areas = [row.get('Area__c') for row in results if row.get('Area__c')]
-        logger.info(f"Retrieved {len(area)} areas")
+        
+        areas = []
+        if results:
+            first_key = list(results[0].keys())[0]
+            areas = [row[first_key] for row in results if row.get(first_key)]
+            
+        logger.info(f"Retrieved {len(areas)} areas")
         return areas
     
     except Exception as e:
@@ -92,20 +97,9 @@ def get_areas_list(tenant_id: str, client_id: str, client_secret: str, sql_endpo
             conn.close()
 
 def get_specialised_carers_list(tenant_id: str, client_id: str, client_secret: str, sql_endpoint: str, database: str, query: str):
-    conn = None 
-    try:
-        conn = get_fabric_connection(tenant_id, client_id, client_secret, sql_endpoint, database)
-        results = execute_query(conn, query)
-        logger.info(f"Retrieved {len(results)} specialised carers")
-        return results
-    
-    except Exception as e:
-        loggeer.error(f"Failed to get specialised carers list: {e}")
-        raise
-    
-    finally:
-        if conn:
-            conn.close()
+    # TODO: This function name is specific to the current use case, but it should be more generic
+    # will use this function for now
+    return get_salesforce_data(tenant_id, client_id, client_secret, sql_endpoint, database, query)
 
 
 def get_salesforce_data(tenant_id: str, client_id: str, client_secret: str, sql_endpoint: str, database: str, query: str):
@@ -113,11 +107,12 @@ def get_salesforce_data(tenant_id: str, client_id: str, client_secret: str, sql_
     try:
         conn = get_fabric_connection(tenant_id, client_id, client_secret, sql_endpoint, database)
         results = execute_query(conn, query)
+        logger.info(f"Retrieved {len(results)} records")
         return results
     
     except Exception as e:
-        logger.error(f"Error querying Salesforce data: {e}")
-        return[]
+        logger.error(f"Error querying data: {e}")
+        return []
     
     finally:
         if conn:

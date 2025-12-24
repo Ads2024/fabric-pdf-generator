@@ -1,0 +1,8 @@
+pandas
+requests
+pyyaml
+azure-identity
+msal
+pyodbc
+pytz
+
