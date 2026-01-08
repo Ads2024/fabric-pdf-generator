@@ -6,14 +6,14 @@ timezone: "Australia/Sydney"
 
 sharepoint:
   folders:
-    areas: "Areas"
+    functions: "Functions"
     employees: "Employees"
     logs: "Logs"
 
 
 powerbi:
-  areas:
-    parameter_name: "Area"
+  functions:
+    parameter_name: "Function"
     export_format: "PDF"
   employees:
     parameter_name: "Employee"
@@ -26,14 +26,14 @@ powerbi:
 
 
 queries:
-  areas: |
-    SELECT AreaID, AreaName FROM Areas                
+  functions: |
+    SELECT FunctionID, FunctionName FROM Functions                
   employees: |
     SELECT EmployeeID, EmployeeName FROM Employees
 
 
 processing:
-  batch_size_areas: 30
+  batch_size_functions: 30
   batch_size_employees: 30
   max_workers: 30
   max_retries: 3
