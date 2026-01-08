@@ -53,7 +53,7 @@ A robust Python application for automating the generation of PDFs from PowerBI r
     -   `EMAIL_SENDER`, `EMAIL_RECIPIENTS`
 
 2.  **Config File**: Edit `config/config.yaml` to define:
-    -   SQL Queries (`queries.areas`, `queries.employees`)
+    -   SQL Queries for your data
     -   SharePoint folder paths
     -   Batch processing sizes
 
@@ -66,14 +66,14 @@ python src/main.py --config config/config.yaml
 
 **Options**:
 -   `--dry-run`: Simulate execution without external calls.
--   `--report-type`: Choose `areas`, `employees`, or `both`.
+-   `--report-type`: Choose report types defined in your config (e.g. `areas`, `employees`).
 
 ## CI/CD Configuration (GitHub Actions)
 The repository includes a GitHub Actions workflow (`.github/workflows/ci.yml`) that runs:
 1.  **Tests**: On every push/PR to `main`.
 2.  **Production Sync**: Daily at 8:00 AM Sydney Time (or via manual trigger).
 
-> **Note**: The workflow file is currently commented out to prevent accidental execution before secrets are configured. To enable it, uncomment the contents of `.github/workflows/ci.yml`.
+
 
 **Required GitHub Secrets**:
 To enable the production workflow, add the following as Repository Secrets:
