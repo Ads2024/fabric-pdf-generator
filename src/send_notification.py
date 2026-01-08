@@ -79,7 +79,7 @@ def create_email_html_body(date_str: str, areas_total: int, areas_success: int, 
 
     <body>
         <div class="container">
-            <h2>Salesforce BCP PDF Generation Report</h2>
+            <h2>PDF Generation Report</h2>
 
             <p>Hello,</p>
             <p>Today is <strong>{date_str}</strong>.</p>
@@ -106,20 +106,20 @@ def create_email_html_body(date_str: str, areas_total: int, areas_success: int, 
             </div>
 
             <div class="section">
-                <h3>👥 Specialised Carers</h3>
+                <h3>👥 Employees</h3>
                 <div class="stats">
     """
 
     if employees_failed == 0:
         html_body += f"""
-                    <span class="success">✅ {employees_success} Specialised Carers records</span> have been created successfully.<br>
-                    Total count of Specialised Carers: <strong>{employees_total}</strong>
+                    <span class="success">✅ {employees_success} Employees records</span> have been created successfully.<br>
+                    Total count of Employees: <strong>{employees_total}</strong>
         """
     else:
         html_body += f"""
-                    <span class="success">✅ {employees_success} Specialised Carers records</span> have been created successfully.<br>
+                    <span class="success">✅ {employees_success} Employees records</span> have been created successfully.<br>
                     <span class="failure">❌ {employees_failed} failed</span> to be created.<br>
-                    Total count of Specialised Carers: <strong>{employees_total}</strong>
+                    Total count of Employees: <strong>{employees_total}</strong>
         """
 
     html_body += """
@@ -127,7 +127,7 @@ def create_email_html_body(date_str: str, areas_total: int, areas_success: int, 
             </div>
 
             <div class="footer">
-                <p>This is an automated notification from the BCP PDF Generation workflow.</p>
+                <p>This is an automated notification from the PDF Generation workflow.</p>
                 <p>For any issues, please check the logs in SharePoint.</p>
             </div>
         </div>
@@ -213,9 +213,9 @@ def send_email_via_graph(access_token: str, sender_email: str, receipient_emails
         return False    
 
 
-def send_bcp_notification(tenant_id: str, client_id: str, client_secret: str, sender_email: str, receipient_emails: List[str], date_str: str, areas_total: int, areas_success: int, areas_failed: int, employees_total: int, employees_success: int, employees_failed: int, cc_emails: Optional[List[str]] = None, smtp_server: Optional[str] = None, smtp_port: Optional[int] = None, smtp_password: Optional[str] = None, use_smtp_fallback: bool = True):
+def send_notification(tenant_id: str, client_id: str, client_secret: str, sender_email: str, receipient_emails: List[str], date_str: str, areas_total: int, areas_success: int, areas_failed: int, employees_total: int, employees_success: int, employees_failed: int, cc_emails: Optional[List[str]] = None, smtp_server: Optional[str] = None, smtp_port: Optional[int] = None, smtp_password: Optional[str] = None, use_smtp_fallback: bool = True):
 
-    subject = f"BCP PDF Generation Report - {date_str}"
+    subject = f"PDF Generation Report - {date_str}"
 
     html_body = create_email_html_body(
         date_str,
