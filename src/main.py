@@ -39,8 +39,8 @@ def setup_logging(config_path: str = None):
                 config = yaml.safe_load(f)
                 if 'logging' in config and 'file_path' in config['logging']:
                      log_file = config['logging']['file_path']
-        except:
-             pass
+        except Exception as e:
+             print(f"Warning: Failed to load log config: {e}")
 
     logging.basicConfig(
         level = logging.INFO,
@@ -87,7 +87,7 @@ def get_environment_variables():
 
         #Email
         'EMAIL_SENDER': os.getenv('EMAIL_SENDER'),
-        'EMAIL_RECIPIENT': os.getenv('EMAIL_RECIPIENT'),
+        'EMAIL_RECIPIENTS': os.getenv('EMAIL_RECIPIENTS'),
     }
 
     optional_vars = {
@@ -191,7 +191,7 @@ def main():
 
         if args.report_type in ['employees', 'both']:
             logger.info("Fetching employee list...")
-            employee_list = get_specialised_carers_list(                #TODO: change function name to more generic get_employee_list in query_fabric_lakehouse.py
+            employee_list = get_employees_list(
                 env_vars['FABRIC_TENANT_ID'],
                 env_vars['FABRIC_CLIENT_ID'],
                 env_vars['FABRIC_CLIENT_SECRET'],
@@ -385,7 +385,7 @@ def main():
                 logger.info("STEP 7 : Sending email notifications")
                 logger.info("="*60) 
 
-                recipeints = env_vars['EMAIL_RECIPIENTS'].split(",")
+                recipients = env_vars['EMAIL_RECIPIENTS'].split(",")
 
                 smtp_port = None 
                 if env_vars['SMTP_PORT'] != 'None':
@@ -399,7 +399,7 @@ def main():
                     env_vars['SHAREPOINT_CLIENT_ID'],
                     env_vars['SHAREPOINT_CLIENT_SECRET'],
                     env_vars['EMAIL_SENDER'],
-                    recipeints,
+                    recipients,
                     date_str,
                     len(function_list),
                     functions_success_count,

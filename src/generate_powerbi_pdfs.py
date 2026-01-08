@@ -26,7 +26,7 @@ def get_powerbi_access_token(tenant_id: str, client_id: str, client_secret: str)
 
 def export_report_to_pdf(workspace_id: str, report_id: str, parameter_name: str, parameter_value: str, access_token: str, max_retries: int = 30, retry_interval: int = 10):
     try:
-        base_url = "https://api.powerbi.com/v1.0/myorg" 
+        base_url = "https://api.powerbi.com/v1.0/myorg" # TODO: Make this configurable for other cloud environments 
         export_url = f"{base_url}/groups/{workspace_id}/reports/{report_id}/ExportTo"
         headers = {
             "Authorization": f"Bearer {access_token}",
