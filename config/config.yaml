@@ -48,7 +48,7 @@ logging:
 
 
 email:
-  subject_template: "BCP - PowerBI Export - {{}}"
+  subject_template: "PowerBI Export - {{}}"
   success_emoji: "✅"
   failure_emoji: "❌"
 
